@@ -10,14 +10,26 @@ module Enumerable
             yield self[i],i
         end
     end
+
+    def my_select
+        new_array=[]
+        my_each do |element| 
+            if(yield element)
+                new_array.push(element)
+            end
+        end
+        new_array
+    end
 end
 
-testArr=%w(5 6 7)
+testArr=[5,6,7]
 
-p "My each test"
+# p "My each test"
 
-testArr.my_each{|number| p number}
+# testArr.my_each{|number| p number}
 
-p "My each with index test"
+# p "My each with index test"
 
-testArr.my_each_with_index{|number,index| p "#{number} has index of #{index}"}
+# testArr.my_each_with_index{|number,index| p "#{number} has index of #{index}"}
+
+p testArr.my_select{|number| number.eql?(6)}
