@@ -78,16 +78,16 @@ module Enumerable
     end
 
     def my_map(proc=nil)
-        newArr=[]
+        new_arr=[]
         my_each do |element|
             if (proc)
                 param = proc.call(element)
             else
                 param = yield element
             end
-            newArr.push(param)
+            new_arr.push(param)
         end
-        newArr
+        new_arr
     end
 
     def my_inject(initial_value=0)
