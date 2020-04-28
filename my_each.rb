@@ -3,12 +3,14 @@ module Enumerable
         for i in 0...length
             yield self[i]
         end
+        self
     end
 
     def my_each_with_index
         for i in 0...length
             yield self[i],i
         end
+        self
     end
 
     def my_select
@@ -109,7 +111,7 @@ testArr=[5,6,7]
 
 # p "My each test"
 
-# testArr.my_each{|test| p number}
+# p testArr.my_each{|test|  test}
 
 # p "My each with index test"
 
@@ -135,9 +137,9 @@ testArr=[5,6,7]
 
 # p testArr.my_count{|number| number>5}
 
-p "My map test"
-proc= Proc.new {|element| element}
-p testArr.my_map(proc){|number| number+5}
+# p "My map test"
+# proc= Proc.new {|element| element}
+# p testArr.my_map(proc){|number| number+5}
 
 # p "My inject test"
 
