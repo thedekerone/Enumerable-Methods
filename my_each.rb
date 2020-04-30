@@ -125,7 +125,7 @@ end
 
 # TEST USING THE FOLLOWING CODE
 
-test_arr = [5, 6, 7]
+# test_arr = [5, 6, 7]
 
 # p 'My each test'
 
