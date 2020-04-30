@@ -1,14 +1,20 @@
 module Enumerable
   def my_each
-    (0...length).each do |i|
-      yield self[i]
+    array = to_a
+    (0...array.size).each do |i|
+      return to_enum(:my_each) unless block_given?
+
+      yield array[i]
     end
     self
   end
 
   def my_each_with_index
-    (0...length).each do |i|
-      yield self[i], i
+    array = to_a
+    (0...array.size).each do |i|
+      return to_enum(:my_each_with_index) unless block_given?
+
+      yield array[i], i
     end
     self
   end
@@ -16,58 +22,65 @@ module Enumerable
   def my_select
     new_array = []
     my_each do |element|
+      return to_enum(:my_select) unless block_given?
+
       new_array.push(element) if yield element
     end
     new_array
   end
 
-  def my_all?
+  def my_all?(compare = nil)
     result = true
     my_each do |element|
-      statement = if block_given?
-                    yield element
-                  else
-                    element
-                  end
+      if compare
+        result = compare.class.eql?(Class) ? element.is_a?(compare) : element.eql?(compare)
+      elsif block_given?
+        result = yield element
 
-      unless statement
-        result = false
-        break
       end
+      break unless result
+    end
 
-      result = true
+    result
+  end
+
+  def my_any?(compare = nil)
+    result = true
+    my_each do |element|
+      if compare
+        result = compare.class.eql?(Class) ? element.is_a?(compare) : element.eql?(compare)
+      elsif block_given?
+        result = yield element
+      end
+      break if result
     end
     result
   end
 
-  def my_any?
+  def my_none?(compare = nil)
     result = true
     my_each do |element|
-      statement = if block_given?
-                    yield element
-                  else
-                    element
-                  end
-
-      if statement
-        result = true
-        break
-      end
-      result = false
+      result = if compare
+                 compare.class.eql?(Class) ? !element.is_a?(compare) : !element.eql?(compare)
+               elsif block_given?
+                 !(yield element)
+               else
+                 !element
+               end
+      break unless result
     end
     result
   end
 
-  def my_none?
-    !my_any? do |element|
-      yield element
-    end
-  end
-
-  def my_count
+  def my_count(arg)
     counter = 0
+    param = element
     my_each do |element|
-      param = yield element
+      param = if arg
+                arg
+              elsif block_given?
+                yield element
+              end
       counter += 1 if param.eql?(true) || param.eql?(element)
     end
     counter
@@ -79,6 +92,8 @@ module Enumerable
       param = if proc
                 proc.call(element)
               else
+                return to_enum(:my_map) unless block_given?
+
                 yield element
               end
       new_arr.push(param)
@@ -86,29 +101,35 @@ module Enumerable
     new_arr
   end
 
-  def my_inject(initial_value = 0)
-    acumulator = initial_value
-    my_each do |element|
-      result = yield element, acumulator
-      acumulator = result
+  def my_inject(initial_value = 1, use = :+)
+    if initial_value.is_a?(Symbol)
+      use = initial_value
+      initial_value = 1
     end
-    acumulator
-  end
+    initial_value = 0 if use == :+
 
-  def multiply_els
-    my_inject(1) do |acumulator, element|
-      acumulator * element
+    my_each do |element|
+      result = use&.to_proc&.call(initial_value, element)
+      result = yield initial_value, element if block_given?
+      initial_value = result
     end
+    initial_value
+  end
+end
+
+def multiply_els
+  my_inject(1) do |acumulator, element|
+    acumulator * element
   end
 end
 
 # TEST USING THE FOLLOWING CODE
 
-# test_arr = [5, 6, 7]
+test_arr = [5, 6, 7]
 
 # p 'My each test'
 
-# test_arr.my_each { |test| p test + 3 }
+# test_arr.my_each { |x| p x + 2 }
 
 # p 'My each with index test'
 
@@ -116,28 +137,32 @@ end
 
 # p 'My select test'
 
-# p test_arr.my_select { |number| number != 6 }
+# p test_arr.my_select { |x| x != 6 }
 
 # p 'My all test'
 
-# p test_arr.my_all? { |number| number > 3 }
+# p test_arr.my_all?{|x| x>4}
 
 # p 'My any test'
 
-# p test_arr.my_any? { |number| number }
+# p test_arr.my_any?(3)
 
 # p 'My none test'
 
-# p test_arr.my_none? { |number| number > 7 }
+# p test_arr.my_none?
+
+# p (1..4).my_none?(Numeric)
 
 # p 'My count test'
 
-# p test_arr.my_count { |number| number > 5 }
+# p test_arr.my_count(5)
 
 # p 'My map test'
 # proc = proc { |element| element }
-# p test_arr.my_map(proc) { |number| number + 5 }
+# p test_arr.my_map
 
 # p 'My inject test'
 
-# p test_arr.multiply_els
+# p test_arr.my_inject{|x, y| x+y }
+
+# p multiply_el(stest_arr)
