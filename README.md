@@ -2,7 +2,16 @@
 
 The methods in this code are enumerables to work with arrays.
 
-it contains copies of all the most used enumerables.
+it contains copies of all the most used enumerables:
+- each
+- each_with_index
+- my_select
+- my_all?
+- my_any?
+- my_none?
+- my_count
+- my_map
+- my_inject
 
 ## Built With
 
