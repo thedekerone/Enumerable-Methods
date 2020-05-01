@@ -1,20 +1,26 @@
 module Enumerable
   def my_each
     array = to_a
-    (0...array.size).each do |i|
+    i = 0
+    while i < array.size
       return to_enum(:my_each) unless block_given?
 
       yield array[i]
+      i += 1
+
     end
+
     self
   end
 
   def my_each_with_index
     array = to_a
-    (0...array.size).each do |i|
+    i = 0
+    while i < array.size
       return to_enum(:my_each_with_index) unless block_given?
 
       yield array[i], i
+      i += 1
     end
     self
   end
@@ -33,10 +39,13 @@ module Enumerable
     result = true
     my_each do |element|
       if compare
-        result = compare.class.eql?(Class) ? element.is_a?(compare) : element.eql?(compare)
+        result = compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare)
       elsif block_given?
         result = yield element
 
+      else
+        bool = !element
+        result = !bool
       end
       break unless result
     end
@@ -48,9 +57,12 @@ module Enumerable
     result = true
     my_each do |element|
       if compare
-        result = compare.class.eql?(Class) ? element.is_a?(compare) : element.eql?(compare)
+        result = compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare.to_s)
       elsif block_given?
         result = yield element
+      else
+        bool = !element
+        result = !bool
       end
       break if result
     end
@@ -61,7 +73,7 @@ module Enumerable
     result = true
     my_each do |element|
       result = if compare
-                 compare.class.eql?(Class) ? !element.is_a?(compare) : !element.eql?(compare)
+                 compare.class.eql?(Class) ? !element.is_a?(compare) : !element.to_s.match?(compare)
                elsif block_given?
                  !(yield element)
                else
@@ -72,14 +84,15 @@ module Enumerable
     result
   end
 
-  def my_count(arg)
+  def my_count(arg = nil)
     counter = 0
-    param = element
     my_each do |element|
       param = if arg
                 arg
               elsif block_given?
                 yield element
+              else
+                element
               end
       counter += 1 if param.eql?(true) || param.eql?(element)
     end
@@ -101,12 +114,12 @@ module Enumerable
     new_arr
   end
 
-  def my_inject(initial_value = 1, use = :+)
+  def my_inject(initial_value = 0, use = :+)
     if initial_value.is_a?(Symbol)
       use = initial_value
-      initial_value = 1
+
+      %i[+ -].include(initial_value) ? 0 : 1
     end
-    initial_value = 0 if use == :+
 
     my_each do |element|
       result = use&.to_proc&.call(initial_value, element)
@@ -117,8 +130,8 @@ module Enumerable
   end
 end
 
-def multiply_els
-  my_inject(1) do |acumulator, element|
+def multiply_els(array)
+  array.my_inject(1) do |acumulator, element|
     acumulator * element
   end
 end

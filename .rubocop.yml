@@ -17,9 +17,7 @@ Metrics/ClassLength:
 Metrics/BlockLength:
   ExcludedMethods: ['describe']
   Max: 30
-Metrics/ModuleLength:
-  ExcludedMethods: ['describe']
-  Max: 200
+
 
 Style/Documentation:
   Enabled: false
