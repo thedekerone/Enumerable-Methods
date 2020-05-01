@@ -118,7 +118,7 @@ module Enumerable # rubocop:disable Style/ModuleLength
     if initial_value.is_a?(Symbol)
       use = initial_value
 
-      %i[+ -].include(initial_value) ? 0 : 1
+      initial_value = %i[+ -].include?(initial_value) ? 0 : 1
     end
 
     my_each do |element|
@@ -138,7 +138,9 @@ end
 
 # TEST USING THE FOLLOWING CODE
 
-# test_arr = [5, 6, 7]
+test_arr = [5, 6, 7]
+
+p test_arr.my_inject(:+)
 
 # p 'My each test'
 
