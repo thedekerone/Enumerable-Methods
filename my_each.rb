@@ -114,7 +114,7 @@ module Enumerable # rubocop:disable Style/ModuleLength
     new_arr
   end
 
-  def my_inject(initial_value = 0, use = :+)
+  def my_inject(initial_value = 0, use = nil)
     if initial_value.is_a?(Symbol)
       use = initial_value
 
@@ -122,8 +122,11 @@ module Enumerable # rubocop:disable Style/ModuleLength
     end
 
     my_each do |element|
-      result = use&.to_proc&.call(initial_value, element)
-      result = yield initial_value, element if block_given?
+      result = if use
+                 use&.to_proc&.call(initial_value, element)
+               elsif block_given?
+                 yield initial_value, element
+               end
       initial_value = result
     end
     initial_value
@@ -138,9 +141,9 @@ end
 
 # TEST USING THE FOLLOWING CODE
 
-test_arr = [5, 6, 7]
+# test_arr = [5, 6, 7]
 
-p test_arr.my_inject(:+)
+# p test_arr.my_inject(:+){ |x,y| x*y}
 
 # p 'My each test'
 
