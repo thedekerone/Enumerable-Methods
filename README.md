@@ -1,6 +1,4 @@
-# Methods project
-
-This is a project of two algorithms about Enumerble methods in ruby.
+# Enumerable Methods Project
 
 The methods in this code are enumerables to work with arrays.
 
