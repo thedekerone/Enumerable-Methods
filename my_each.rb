@@ -1,4 +1,4 @@
-module Enumerable
+module Enumerable # rubocop:disable Style/ModuleLength
   def my_each
     array = to_a
     i = 0
