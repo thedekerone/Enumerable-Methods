@@ -38,14 +38,14 @@ module Enumerable # rubocop:disable Style/ModuleLength
   def my_all?(compare = nil)
     result = true
     my_each do |element|
-      if compare
-        result = compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare)
-      elsif block_given?
-        result = yield element
+      result = if compare
+                 compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare)
+               elsif block_given?
+                 yield element
 
-      else
-        result= element^1
-      end
+               else
+                 element ^ 1
+               end
       break unless result
     end
 
@@ -55,13 +55,13 @@ module Enumerable # rubocop:disable Style/ModuleLength
   def my_any?(compare = nil)
     result = false
     my_each do |element|
-      if compare
-        result = compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare.to_s)
-      elsif block_given?
-        result = yield element
-      else
-        result = element^1
-      end
+      result = if compare
+                 compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare.to_s)
+               elsif block_given?
+                 yield element
+               else
+                 element ^ 1
+               end
       break if result
     end
     result
@@ -112,15 +112,17 @@ module Enumerable # rubocop:disable Style/ModuleLength
     new_arr
   end
 
-  def my_inject(initial_value = 0, use = nil)
+  def my_inject(initial_value = 0, use = nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     if initial_value.is_a?(Symbol)
       use = initial_value
 
       initial_value = %i[+ -].include?(initial_value) ? 0 : 1
     end
-     
+
     my_each do |element|
-      initial_value="" if element.class.eql?(String) and (initial_value.class.eql?(Integer) or initial_value.class.eql?(Float))
+      if element.class.eql?(String) && (initial_value.class.eql?(Integer) || initial_value.class.eql?(Float))
+        initial_value = ''
+      end
       result = if use
                  use&.to_proc&.call(initial_value, element)
                elsif block_given?
