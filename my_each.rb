@@ -44,8 +44,7 @@ module Enumerable # rubocop:disable Style/ModuleLength
         result = yield element
 
       else
-        bool = !element
-        result = !bool
+        result= element^1
       end
       break unless result
     end
@@ -61,8 +60,7 @@ module Enumerable # rubocop:disable Style/ModuleLength
       elsif block_given?
         result = yield element
       else
-        bool = !element
-        result = !bool
+        result = element^1
       end
       break if result
     end
