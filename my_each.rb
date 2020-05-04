@@ -54,7 +54,7 @@ module Enumerable # rubocop:disable Style/ModuleLength
   end
 
   def my_any?(compare = nil)
-    result = true
+    result = false
     my_each do |element|
       if compare
         result = compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare.to_s)
@@ -120,8 +120,9 @@ module Enumerable # rubocop:disable Style/ModuleLength
 
       initial_value = %i[+ -].include?(initial_value) ? 0 : 1
     end
-
+     
     my_each do |element|
+      initial_value="" if element.class.eql?(String) and (initial_value.class.eql?(Integer) or initial_value.class.eql?(Float))
       result = if use
                  use&.to_proc&.call(initial_value, element)
                elsif block_given?
@@ -138,49 +139,3 @@ def multiply_els(array)
     acumulator * element
   end
 end
-
-# TEST USING THE FOLLOWING CODE
-
-# test_arr = [5, 6, 7]
-
-# p test_arr.my_inject(:+){ |x,y| x*y}
-
-# p 'My each test'
-
-# test_arr.my_each { |x| p x + 2 }
-
-# p 'My each with index test'
-
-# test_arr.my_each_with_index { |number, index| p "#{number} has index of #{index}" }
-
-# p 'My select test'
-
-# p test_arr.my_select { |x| x != 6 }
-
-# p 'My all test'
-
-# p test_arr.my_all?{|x| x>4}
-
-# p 'My any test'
-
-# p test_arr.my_any?(3)
-
-# p 'My none test'
-
-# p test_arr.my_none?
-
-# p (1..4).my_none?(Numeric)
-
-# p 'My count test'
-
-# p test_arr.my_count(5)
-
-# p 'My map test'
-# proc = proc { |element| element }
-# p test_arr.my_map
-
-# p 'My inject test'
-
-# p test_arr.my_inject{|x, y| x+y }
-
-# p multiply_el(stest_arr)
