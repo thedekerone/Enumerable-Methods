@@ -39,12 +39,12 @@ module Enumerable # rubocop:disable Style/ModuleLength
     result = true
     my_each do |element|
       result = if compare
-                 compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare)
+                 compare.class.eql?(Class) ? element.is_a?(compare) : element.to_s.match?(compare.to_s)
                elsif block_given?
                  yield element
 
                else
-                 element ^ 1
+                 !element ^ 0
                end
       break unless result
     end
@@ -60,7 +60,7 @@ module Enumerable # rubocop:disable Style/ModuleLength
                elsif block_given?
                  yield element
                else
-                 element ^ 1
+                 !element ^ 0
                end
       break if result
     end
@@ -71,7 +71,7 @@ module Enumerable # rubocop:disable Style/ModuleLength
     result = true
     my_each do |element|
       result = if compare
-                 compare.class.eql?(Class) ? !element.is_a?(compare) : !element.to_s.match?(compare)
+                 compare.class.eql?(Class) ? !element.is_a?(compare) : !element.to_s.match?(compare.to_s)
                elsif block_given?
                  !(yield element)
                else
