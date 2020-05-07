@@ -101,4 +101,65 @@ describe Enumerable do
       end
     end
   end
+  describe '#my_any?' do
+    context 'When the block is given' do
+      it 'any element matches the condition in block' do
+        expect(%w[ant bear cat].my_any? { |word| word.length > 3 }).to eql(true)
+      end
+
+      it 'none of the elements matches the condition in block' do
+        expect(%w[ant bear cat].my_any? { |word| word.length >= 6 }).to eql(false)
+      end
+    end
+
+    context 'When the block is not given and parameter is given:' do
+      it 'regex' do
+        expect(%w[ant bear cat].my_any?(/d/)).to eql(false)
+      end
+      it 'Class' do
+        expect([nil, true, 99].my_any?(Integer)).to eql(true)
+      end
+    end
+    context 'When the neither the block or parameter is given' do
+      it 'the array is empty' do
+        expect([].my_any?).to eql(false)
+      end
+      it 'the array is not empty' do
+        expect([nil, true, 99].my_any?).to eql(true)
+      end
+    end
+  end
+  describe '#my_none?' do
+    context 'When the block is given' do
+      it 'none of the element matches the condition in block' do
+        expect(%w{ant bear cat}.none? { |word| word.length == 5 }).to eql(true)
+      end
+
+      it 'any elements matches the condition in block' do
+        expect(%w{ant bear cat}.none? { |word| word.length >= 4 }).to eql(false)
+      end
+    end
+
+    context 'When the block is not given and parameter is given:' do
+      it 'regex' do
+        expect(%w{ant bear cat}.none?(/d/) ).to eql(true)
+      end
+      it 'Class' do
+        expect([1, 3.14, 42].none?(Float)).to eql(false)
+      end
+    end
+    context 'When the neither the block or parameter is given' do
+      it 'the array is empty' do
+        expect([].none?).to eql(true)
+      end
+      it 'the array is not empty and only have falsy values' do
+        expect([nil, false].none?).to eql(true)
+      end
+      it 'the array is not empty and have some truthy values' do
+        expect([nil, false, true].none?).to eql(false)
+      end
+    end
+  end
+  
+
 end
