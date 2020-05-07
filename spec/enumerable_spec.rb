@@ -160,6 +160,24 @@ describe Enumerable do
       end
     end
   end
+
+  describe "my_count" do
+    context 'When the block is given' do
+        it "counts the elements that matches the condition in block" do
+            expect(array.my_count {|x| x>1}).to eql(2)
+        end
+    end
+    context "when not block is given and parameter is given" do
+        it "counts the elements that match the parameters value" do
+            expect(array.my_count(2)).to eql(1)
+        end
+    end
+    context 'When the block is not given and parameter is given:' do
+        it "counts the elements of the array" do
+            expect(array.my_count).to eql(3)
+        end
+    end
+  end
   
 
 end
