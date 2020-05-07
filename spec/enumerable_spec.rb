@@ -178,21 +178,42 @@ describe Enumerable do
       end
     end
   end
-  describe "#my_map" do
-      context "When the block is given" do
-          it 'returns the array after applying the block conditions' do
-              expect(array.my_map{|x| x**2}).to eql([1,4,9])
-          end
+  describe '#my_map' do
+    context 'When the block is given' do
+      it 'returns the array after applying the block conditions' do
+        expect(array.my_map { |x| x**2 }).to eql([1, 4, 9])
+      end
 
-          it "return the array after applying the block condition to the range" do
-              expect((1..4).my_map { |i| i*i } ).to eql( [1, 4, 9, 16])
-          end
+      it 'return the array after applying the block condition to the range' do
+        expect((1..4).my_map { |i| i * i }).to eql([1, 4, 9, 16])
       end
-      it " the block is not given " do
-          expect(array.my_map).to be_a(Enumerator)
-      end
+    end
+    it ' the block is not given ' do
+      expect(array.my_map).to be_a(Enumerator)
+    end
   end
-  describe "#my_inject" do
-      
+  describe '#my_inject' do
+    context 'When the block is given return the result of the operation applied in block' do
+      it 'without passing the initial value' do
+        expect((5..10).my_inject { |sum, n| sum + n }).to eql(45)
+      end
+      it 'passing the inital value' do
+        expect((5..10).my_inject(1) { |product, n| product * n }).to eql(151_200)
+      end
+      it 'when the elements are the string' do
+        longest = %w[cat sheep bear].my_inject do |memo, word|
+          memo.length > word.length ? memo : word
+        end
+        expect(longest).to eql('sheep')
+      end
+    end
+    context 'When the block is not given' do
+      it 'passing the symbols' do
+        expect((5..10).my_inject(:+)).to eql(45)
+      end
+      it 'passing the symbols and the initial value' do
+        expect((5..10).my_inject(1, :*)).to eql(151_200)
+      end
+    end
   end
 end
