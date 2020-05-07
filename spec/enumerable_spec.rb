@@ -132,17 +132,17 @@ describe Enumerable do
   describe '#my_none?' do
     context 'When the block is given' do
       it 'none of the element matches the condition in block' do
-        expect(%w{ant bear cat}.none? { |word| word.length == 5 }).to eql(true)
+        expect(%w[ant bear cat].none? { |word| word.length == 5 }).to eql(true)
       end
 
       it 'any elements matches the condition in block' do
-        expect(%w{ant bear cat}.none? { |word| word.length >= 4 }).to eql(false)
+        expect(%w[ant bear cat].none? { |word| word.length >= 4 }).to eql(false)
       end
     end
 
     context 'When the block is not given and parameter is given:' do
       it 'regex' do
-        expect(%w{ant bear cat}.none?(/d/) ).to eql(true)
+        expect(%w[ant bear cat].none?(/d/)).to eql(true)
       end
       it 'Class' do
         expect([1, 3.14, 42].none?(Float)).to eql(false)
@@ -161,23 +161,38 @@ describe Enumerable do
     end
   end
 
-  describe "my_count" do
+  describe '#my_count' do
     context 'When the block is given' do
-        it "counts the elements that matches the condition in block" do
-            expect(array.my_count {|x| x>1}).to eql(2)
-        end
+      it 'counts the elements that matches the condition in block' do
+        expect(array.my_count { |x| x > 1 }).to eql(2)
+      end
     end
-    context "when not block is given and parameter is given" do
-        it "counts the elements that match the parameters value" do
-            expect(array.my_count(2)).to eql(1)
-        end
+    context 'when not block is given and parameter is given' do
+      it 'counts the elements that match the parameters value' do
+        expect(array.my_count(2)).to eql(1)
+      end
     end
     context 'When the block is not given and parameter is given:' do
-        it "counts the elements of the array" do
-            expect(array.my_count).to eql(3)
-        end
+      it 'counts the elements of the array' do
+        expect(array.my_count).to eql(3)
+      end
     end
   end
-  
+  describe "#my_map" do
+      context "When the block is given" do
+          it 'returns the array after applying the block conditions' do
+              expect(array.my_map{|x| x**2}).to eql([1,4,9])
+          end
 
+          it "return the array after applying the block condition to the range" do
+              expect((1..4).my_map { |i| i*i } ).to eql( [1, 4, 9, 16])
+          end
+      end
+      it " the block is not given " do
+          expect(array.my_map).to be_a(Enumerator)
+      end
+  end
+  describe "#my_inject" do
+      
+  end
 end
