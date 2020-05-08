@@ -85,11 +85,17 @@ describe Enumerable do
     end
 
     context 'When the block is not given and parameter is given:' do
-      it 'regex' do
+      it 'regex when not everything matches' do
         expect(%w[ant bear cat].my_all?(/t/)).to eql(false)
       end
-      it 'Class' do
+      it 'regex when everything matches' do
+        expect(%w[ant tree cat].my_all?(/t/)).to eql(true)
+      end
+      it 'Class when every element share the same class' do
         expect([1, 2i, 3.14].my_all?(Numeric)).to eql(true)
+      end
+      it 'Class when not every element share the same class' do
+        expect([1, 'hello', 3.14].my_all?(Numeric)).to eql(false)
       end
     end
     context 'When the neither the block or parameter is given' do
@@ -113,11 +119,17 @@ describe Enumerable do
     end
 
     context 'When the block is not given and parameter is given:' do
-      it 'regex' do
+      it 'regex when any element matches' do
+        expect(%w[ant duck cat].my_any?(/d/)).to eql(true)
+      end
+      it 'regex when none of the element matches' do
         expect(%w[ant bear cat].my_any?(/d/)).to eql(false)
       end
-      it 'Class' do
+      it 'Class when any of the element belongs to that class' do
         expect([nil, true, 99].my_any?(Integer)).to eql(true)
+      end
+      it 'Class when none of the element belongs to that class' do
+        expect([nil, true, 'string'].my_any?(Integer)).to eql(false)
       end
     end
     context 'When the neither the block or parameter is given' do
@@ -132,36 +144,42 @@ describe Enumerable do
   describe '#my_none?' do
     context 'When the block is given' do
       it 'none of the element matches the condition in block' do
-        expect(%w[ant bear cat].none? { |word| word.length == 5 }).to eql(true)
+        expect(%w[ant bear cat].my_none? { |word| word.length == 5 }).to eql(true)
       end
 
       it 'any elements matches the condition in block' do
-        expect(%w[ant bear cat].none? { |word| word.length >= 4 }).to eql(false)
+        expect(%w[ant bear cat].my_none? { |word| word.length >= 4 }).to eql(false)
       end
     end
 
     context 'When the block is not given and parameter is given:' do
-      it 'regex' do
-        expect(%w[ant bear cat].none?(/d/)).to eql(true)
+      it 'regex when none of the element matches' do
+        expect(%w[ant bear cat].my_none?(/d/)).to eql(true)
       end
-      it 'Class' do
-        expect([1, 3.14, 42].none?(Float)).to eql(false)
+      it 'regex when any element matches' do
+        expect(%w[ant duck cat].my_none?(/d/)).to eql(false)
+      end
+      it 'Class when none of the element matches' do
+        expect([1.0, 3.14, 42].my_none?(Float)).to eql(false)
+      end
+      it 'Class when any of the element matches' do
+        expect([1, 3.14, 42].my_none?(Float)).to eql(false)
       end
     end
     context 'When the neither the block or parameter is given' do
       it 'the array is empty' do
-        expect([].none?).to eql(true)
+        expect([].my_none?).to eql(true)
       end
       it 'the array is not empty and only have falsy values' do
-        expect([nil, false].none?).to eql(true)
+        expect([nil, false].my_none?).to eql(true)
       end
       it 'the array is not empty and have some truthy values' do
-        expect([nil, false, true].none?).to eql(false)
+        expect([nil, false, true].my_none?).to eql(false)
       end
     end
   end
 
-  describe '#my_count' do
+  describe 'my_count' do
     context 'When the block is given' do
       it 'counts the elements that matches the condition in block' do
         expect(array.my_count { |x| x > 1 }).to eql(2)
@@ -175,44 +193,6 @@ describe Enumerable do
     context 'When the block is not given and parameter is given:' do
       it 'counts the elements of the array' do
         expect(array.my_count).to eql(3)
-      end
-    end
-  end
-  describe '#my_map' do
-    context 'When the block is given' do
-      it 'returns the array after applying the block conditions' do
-        expect(array.my_map { |x| x**2 }).to eql([1, 4, 9])
-      end
-
-      it 'return the array after applying the block condition to the range' do
-        expect((1..4).my_map { |i| i * i }).to eql([1, 4, 9, 16])
-      end
-    end
-    it ' the block is not given ' do
-      expect(array.my_map).to be_a(Enumerator)
-    end
-  end
-  describe '#my_inject' do
-    context 'When the block is given return the result of the operation applied in block' do
-      it 'without passing the initial value' do
-        expect((5..10).my_inject { |sum, n| sum + n }).to eql(45)
-      end
-      it 'passing the inital value' do
-        expect((5..10).my_inject(1) { |product, n| product * n }).to eql(151_200)
-      end
-      it 'when the elements are the string' do
-        longest = %w[cat sheep bear].my_inject do |memo, word|
-          memo.length > word.length ? memo : word
-        end
-        expect(longest).to eql('sheep')
-      end
-    end
-    context 'When the block is not given' do
-      it 'passing the symbols' do
-        expect((5..10).my_inject(:+)).to eql(45)
-      end
-      it 'passing the symbols and the initial value' do
-        expect((5..10).my_inject(1, :*)).to eql(151_200)
       end
     end
   end
