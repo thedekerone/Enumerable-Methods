@@ -1,7 +1,7 @@
 require_relative '../my_each.rb'
 
 describe Enumerable do
-  let(:array) {[1, 2, 3] }
+  let(:array) { [1, 2, 3] }
   let(:wrong_type) { 'wrong' }
 
   describe '#my_each' do
