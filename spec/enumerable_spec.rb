@@ -1,7 +1,7 @@
-require './my_each.rb'
+require_relative '../my_each.rb'
 
 describe Enumerable do
-  let(:array) { Array.new([1, 2, 3]) }
+  let(:array) {[1, 2, 3] }
   let(:wrong_type) { 'wrong' }
 
   describe '#my_each' do
@@ -10,7 +10,7 @@ describe Enumerable do
         expect(array.my_each { |x| x + 2 }).to eql(array)
       end
 
-      it 'must execute for every element' do
+      it 'calls the given block for each element' do
         test_array = []
         array.my_each { |x| test_array.push(x + 2) }
         expect(test_array).to eql([3, 4, 5])
@@ -98,7 +98,7 @@ describe Enumerable do
         expect([1, 'hello', 3.14].my_all?(Numeric)).to eql(false)
       end
     end
-    context 'When the neither the block or parameter is given' do
+    context 'When  neither the block or parameter is given' do
       it 'the array is empty' do
         expect([].my_all?).to eql(true)
       end
@@ -109,11 +109,11 @@ describe Enumerable do
   end
   describe '#my_any?' do
     context 'When the block is given' do
-      it 'any element matches the condition in block' do
+      it 'returns true if the block returns true for any element' do
         expect(%w[ant bear cat].my_any? { |word| word.length > 3 }).to eql(true)
       end
 
-      it 'none of the elements matches the condition in block' do
+      it 'return false when none of the elements matches the condition in block' do
         expect(%w[ant bear cat].my_any? { |word| word.length >= 6 }).to eql(false)
       end
     end
